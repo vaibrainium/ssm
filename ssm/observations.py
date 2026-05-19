@@ -94,7 +94,7 @@ class Observations(object):
         def _objective(params, itr):
             self.params = params
             obj = _expected_log_joint(expectations)
-            return -obj 
+            return -obj
 
         self.params = optimizer(_objective, self.params, **kwargs)
 
@@ -737,10 +737,10 @@ class InputDrivenObservations(Observations):
             W = np.reshape(params, (self.C - 1, self.M))
             obj = 0
             for data, input, mask, tag, (expected_states, _, _) in zip(datas, inputs, masks, tags, expectations):
-                
+
                 if mask is None:
                     mask = np.ones((data.shape[0], 1), dtype=bool)
-                    
+
                 valid_idx = mask[:, 0] == 1  # Boolean mask for valid rows
                 masked_input = input[valid_idx]
                 masked_data = data[valid_idx]
@@ -770,11 +770,11 @@ class InputDrivenObservations(Observations):
             """
             W = np.reshape(params, (self.C - 1, self.M))
             grad = np.zeros((self.C - 1, self.M))
-            for data, input, mask, tag, (expected_states, _, _) in zip(datas, inputs, masks, tags, expectations): 
-                
+            for data, input, mask, tag, (expected_states, _, _) in zip(datas, inputs, masks, tags, expectations):
+
                 if mask is None:
                     mask = np.ones((data.shape[0], 1), dtype=bool)
-                    
+
                 valid_idx = mask[:, 0] == 1  # Boolean mask for valid rows
                 masked_input = input[valid_idx]
                 masked_data = data[valid_idx]
@@ -804,10 +804,10 @@ class InputDrivenObservations(Observations):
             W = np.reshape(params, (self.C - 1, self.M))
             hess = np.zeros(((self.C - 1) * self.M, (self.C - 1) * self.M))
             for data, input, mask, tag, (expected_states, _, _) in zip(datas, inputs, masks, tags, expectations):
-                
+
                 if mask is None:
                     mask = np.ones((data.shape[0], 1), dtype=bool)
-                    
+
                 valid_idx = mask[:, 0] == 1  # Boolean mask for valid rows
                 masked_input = input[valid_idx]
                 masked_states = expected_states[valid_idx]
@@ -829,9 +829,8 @@ class InputDrivenObservations(Observations):
 
             # Add contribution of prior to hessian:
             if self.prior_sigma != 0:
-                hess += (1 / self.prior_sigma ** 2)
-
-            return hess / T
+                hess += (1 / (self.prior_sigma) ** 2) * np.eye((self.C - 1) * self.M)
+            return hess/T
 
         from scipy.optimize import minimize
         # Optimize weights for each state separately:
